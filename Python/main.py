@@ -3,6 +3,7 @@ import time
 
  
 SCREEN = pygame.display.set_mode ((600, 400))
+MOUSE = pygame.mouse
 circle_x = 50
 circle_y = 50
 speed_y = 0
@@ -20,6 +21,11 @@ while True :
     for event in pygame.event.get () :
         if event.type == pygame.QUIT :
             quit ()
+    click_state = MOUSE.get_pressed(num_buttons=3)
+    if any(click_state) == True:
+        speed_x += 1 if (speed_x >= 0) else -1
+        speed_y += -1
+        alive = True
     if alive == True: 
         SCREEN.fill ((0, 0, 0)) # Background color to rgb 0,0,0 (Black)
 
@@ -63,8 +69,9 @@ while True :
         
         clock.tick()
         print(clock.get_fps())
+        
     else:
-        time.sleep(0.2)
+        time.sleep(0.01)
 
 
 
