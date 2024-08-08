@@ -6,3 +6,6 @@ class Ball:
         self.speed_x = speed_x
         self.speed_y = speed_y
         self.color = color
+        self.defaultColor = color
+        self.collisionColor = [255,0,0]
+        self.alive = True
