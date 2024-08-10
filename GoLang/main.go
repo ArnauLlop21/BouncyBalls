@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"image/color"
 
 	"fyne.io/fyne/v2"
@@ -18,8 +17,7 @@ func initializations() fyne.Window {
 	window.Resize(fyne.NewSize(900,600))
 	ball := Ball{
 		radius:   50,
-		circle_x: 10,
-		circle_y: 10,
+		center: NewPoint(30,30),
 		speed_x:  10,
 		speed_y:  10,
 		color:    [3]byte{255, 0, 0},
@@ -52,7 +50,7 @@ func DrawCircles(window fyne.Window) {
 
         circle.Resize(fyne.NewSize(BALLS[i].radius, BALLS[i].radius))
 
-        circle.Move(fyne.NewPos(float32(BALLS[i].circle_x), float32(BALLS[i].circle_y)))
+        circle.Move(fyne.NewPos(float32(BALLS[i].center.X), float32(BALLS[i].center.Y)))
 
         container.Add(circle)
     }
@@ -62,7 +60,6 @@ func DrawCircles(window fyne.Window) {
 
 
 func main() {
-	fmt.Println("Hello Bouncy Balls!")
 	window := initializations()
 	DrawCircles(window)
 	window.ShowAndRun()
