@@ -1,6 +1,6 @@
 package main
 
-type Ball struct {
+type Ball2 struct {
 	radius float32
 	center Point
 	speed_x int
