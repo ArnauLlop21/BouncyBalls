@@ -1,10 +1,14 @@
 package main
 
-type Ball2 struct {
+import(
+	"image/color"
+)
+
+type Ball struct {
 	radius float32
 	center Point
 	speed_x int
 	speed_y int
-	color [3]byte
+	color color.Color
 }
 
