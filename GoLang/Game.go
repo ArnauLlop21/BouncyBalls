@@ -41,16 +41,16 @@ func (g *Game) Update() error{
 	if (ebiten.IsKeyPressed(ebiten.KeyArrowRight)){
 		
 		if(userTile.tile.X + userTile.tile.sizeX >= screenWidthGlobal){
-			userTile.tile.X = screenWidthGlobal + userTile.tile.sizeX
+			userTile.tile.X = screenWidthGlobal - userTile.tile.sizeX
 		}else{
-			userTile.tile.X += 2
+			userTile.tile.X += 5
 		}
 
 	}else if (ebiten.IsKeyPressed(ebiten.KeyArrowLeft)){
 		if(userTile.tile.X <= 0){
 			userTile.tile.X = 0
 		}else{
-			userTile.tile.X -= 2
+			userTile.tile.X -= 5
 		}
 	}
 
