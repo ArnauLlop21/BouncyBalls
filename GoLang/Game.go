@@ -7,6 +7,8 @@ import (
 
 type Game struct{
 	balls []*Ball
+	tiles []*Tile
+	userTile UserTile
 }
 
 // Layout takes the outside size (e.g., the window size) and returns the (logical) screen size.
@@ -23,6 +25,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	for _, ball := range g.balls{
 		vector.DrawFilledCircle(screen, float32(ball.center.X), float32(ball.center.Y), ball.radius, ball.color, true)
 	}
+
+	for _, rect := range g.tiles{
+		if rect.alive{
+			vector.DrawFilledRect(screen,rect.X, rect.Y, rect.sizeX, rect.sizeY, rect.color, true)
+		}
+	}
+
+	vector.DrawFilledRect(screen, userTile.tile.X, userTile.tile.Y, userTile.tile.sizeX, userTile.tile.sizeY, userTile.tile.color, true)
 }
 
 // This method is called every tick (tipically 60 times per second)
@@ -40,7 +50,18 @@ func (g *Game) Update() error{
 			ball.center.Y = 0 + ball.radius
 			ball.speed_y *= -coefficientOfRestitution
 		}
+
+		for _, block := range g.tiles{
+			if block.alive{
+				if (isColliding(float64(ball.center.X), float64(ball.center.Y), float64(ball.radius), block)){
+					ball.speed_y *= -coefficientOfRestitution
+					block.alive = false
+				}
+			}
+
+		}
 	}
 	
 	return nil
 }
+
