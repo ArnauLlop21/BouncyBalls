@@ -28,5 +28,19 @@ func (g *Game) Draw(screen *ebiten.Image) {
 // This method is called every tick (tipically 60 times per second)
 func (g *Game) Update() error{
 	//Write here the logical update for the game
+	for _, ball := range g.balls{
+		ball.speed_y -= gravity
+		ball.center.Y -= ball.speed_y
+
+		if (ball.center.Y >= screenHeightGlobal){
+			ball.center.Y = screenHeightGlobal - ball.radius
+			ball.speed_y *= -coefficientOfRestitution
+
+		}else if (ball.center.Y <= 0){
+			ball.center.Y = 0 + ball.radius
+			ball.speed_y *= -coefficientOfRestitution
+		}
+	}
+	
 	return nil
 }

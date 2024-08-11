@@ -9,11 +9,11 @@ import (
 
 
 type Point struct {
-	X int
-	Y int
+	X float32
+	Y float32
 }
 
-func NewPoint(x int, y int) Point{return Point{x,y}}
+func NewPoint(x float32, y float32) Point{return Point{x,y}}
 
 func (p Point) Distance(p2 Point) float64 {
 	first := math.Pow(float64(p2.X-p.X), 2)
