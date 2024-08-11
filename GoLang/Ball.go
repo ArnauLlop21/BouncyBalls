@@ -32,3 +32,32 @@ func isColliding(ballX, ballY, radius float64, tile *Tile) bool {
     return (deltaX*deltaX + deltaY*deltaY) < (radius * radius)
 }
 
+func determineCollisionType(ball Ball, tile Tile) (string){
+	left := tile.X
+	right := tile.X + tile.sizeX
+	top := tile.Y
+	bottom := tile.Y + tile.sizeY
+
+	distLeft := ball.center.X - left
+    distRight := right - ball.center.X
+    distTop := ball.center.Y - top
+    distBottom := bottom - ball.center.Y
+
+	minDistX := min(distLeft, distRight)
+	minDistY := min(distTop, distBottom)
+
+	if minDistX < minDistY{
+		if distLeft < distRight{
+			return "left"
+		}else{
+			return "right"
+		}
+	}else{
+		if distTop < distBottom{
+			return "top"
+		}else{
+			return "bottom"
+		}
+	}
+}
+
