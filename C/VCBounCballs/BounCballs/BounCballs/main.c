@@ -1,31 +1,87 @@
-#include <Windows.h>
+#include <windows.h>
+#include <stdlib.h>
 
 /**
  * Extracted from https://www.youtube.com/watch?v=RiweaH6Qmro
 */
 
+#define WINDOW_WIDTH 900
+#define WINDOW_HEIGHT 600
+#define UWM_UPDATEPOSITIONS (WM_USER + 1)
+#define IDT_TIMER1 1
+#define RADIUS 10
+
+
+
 LRESULT WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+        static int x = WINDOW_WIDTH/2 , y = WINDOW_HEIGHT/2;
+        static int speed_x = 1;
+        static int speed_y = 1;
+
 
         switch (uMsg) {
-        case WM_PAINT:
+        case WM_TIMER:
         {
-            HDC DeviceContext = GetDC(hwnd);
-            RECT rect = {
-                75, /* Initial coordinates X */
-                75, /* Initial coordinates Y */
-                250, /* Final coordinates X */
-                250, /* Final coordinates Y*/
-            };
-            HBRUSH solidBrush = CreateSolidBrush(RGB(63, 139, 139));
-            FillRect(DeviceContext, &rect, solidBrush);
-            ReleaseDC(hwnd, DeviceContext); /* Garbage collector for the DC. SUPER IMPORTANT*/
-            DeleteObject(solidBrush); /* This function deletes a logical pen, brush, font or others, freeing some system resources*/
-            return 0;
+            if (wParam == IDT_TIMER1){
+                PostMessage(hwnd, UWM_UPDATEPOSITIONS, 0, 0);
+            }
+        }
+        case UWM_UPDATEPOSITIONS:
+        {
+            if (x + RADIUS >= WINDOW_WIDTH) {
+                speed_x *= -1;
+                x = WINDOW_WIDTH - RADIUS;
+            }
+            else if(x - RADIUS <= 0){
+                speed_x *= -1;
+                x = RADIUS;
+            }
+            if (y + RADIUS >= WINDOW_HEIGHT) {
+                speed_y *= -1;
+                y = WINDOW_HEIGHT - RADIUS;
+            }
+            else if (y - RADIUS <= 0) {
+                speed_y *= -1;
+                y = RADIUS;
+            }
+            x += speed_x;
+            y += speed_y;
+            InvalidateRect(hwnd, NULL, TRUE);
+        }
+        case WM_CREATE:
+        {
+            SetTimer(hwnd, IDT_TIMER1, 1000 / 60, NULL);  // 60 cops per segon (aprox. 16.67 ms per tick)
             break;
         }
+        case WM_PAINT:
+        {
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+            HBRUSH whiteBrush = CreateSolidBrush(RGB(255, 255, 255));
+            FillRect(hdc, &ps.rcPaint, whiteBrush);
+            DeleteObject(whiteBrush);
+            // 3. Dibuixar el cercle
+            HBRUSH brush = CreateSolidBrush(RGB(rand(255), rand(255), rand(255))); // Color blau
+            SelectObject(hdc, brush);
+
+            Ellipse(hdc, x - RADIUS * 2, y - RADIUS * 2, x + RADIUS * 2, y + RADIUS * 2);
+
+            EndPaint(hwnd, &ps);
+            DeleteObject(brush);
+
+            return 0;
+        }
+        /*case WM_MOUSEMOVE: {
+            x = LOWORD(lParam);
+            y = HIWORD(lParam);
+
+            InvalidateRect(hwnd, NULL, TRUE); /* This forces the invalidation of the window and, so, the WM_PAINT message is sent again*/
+        //    return 0;
+        //}
         case WM_DESTROY:
         {
+            KillTimer(hwnd, IDT_TIMER1);
             PostQuitMessage(0);
             return 0;
             break;
@@ -57,7 +113,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrev, PSTR lpCmdLine, int nCm
     };
 
     RegisterClassA(&class);
-    HWND windowHandle = CreateWindowA("FirstTest", "Hello World", WS_CAPTION | WS_POPUP | WS_SYSMENU, 50, 50, 900, 600, NULL, NULL, hInstance, NULL);
+    HWND windowHandle = CreateWindowA("FirstTest", "Hello World", WS_CAPTION | WS_POPUP | WS_SYSMENU, 50, 50, WINDOW_WIDTH, WINDOW_HEIGHT, NULL, NULL, hInstance, NULL);
     BOOL showWindowRet = ShowWindow(windowHandle, nCmdShow);
 
     MSG msg; /* MSG structure that receives message information from the thread's message queue */

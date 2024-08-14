@@ -1,1 +1,3 @@
-﻿  BounCballs.vcxproj -> D:\BouncyBalls\BouncyBalls\C\VCBounCballs\BounCballs\x64\Debug\BounCballs.exe
+﻿  main.c
+D:\BouncyBalls\BouncyBalls\C\VCBounCballs\BounCballs\BounCballs\main.c(65,45): warning C4087: 'rand': declared with 'void' parameter list
+  BounCballs.vcxproj -> D:\BouncyBalls\BouncyBalls\C\VCBounCballs\BounCballs\x64\Debug\BounCballs.exe
