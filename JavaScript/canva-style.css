@@ -1,0 +1,9 @@
+/* canva-style.css */
+
+/* Estils per al canvas */
+#myCanvas {
+    border: 1px solid #000000; /* Línia de frontera negra */
+    background-color: #f0f0f0; /* Color de fons gris clar */
+    display: block; /* Assegura que el canvas es comporti com un bloc */
+    margin: 0 auto; /* Centra el canvas horitzontalment */
+}
