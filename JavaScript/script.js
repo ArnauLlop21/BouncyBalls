@@ -1,53 +1,59 @@
+// Get the canvas element by its ID
 var canvas = document.getElementById("myCanvas");
+const rows = 150;
+const cols = 120;
+const cellSize = 5; // Fix the variable name to be consistent
 
-// Check if canva exists
+// Function to generate a random integer
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
+// Check if canvas exists
 if (canvas) {
     // Get the 2D drawing context
     var ctx = canvas.getContext("2d");
-
-    // Define the center coordinates of the circle
-    var centerX = canvas.width / 2;
-    var centerY = canvas.height / 2;
-    var speedX = 6;
-    var speedY = 2;
-    const coefficientOfRestitution = 1
-
+    let screenArray = Array.from({ length: rows }, () => Array(cols).fill(0));
+    
     // Define the radius of the circle
-    var radius = 50;
+    var radius = cellSize / 2; // Updated to be consistent with cellSize
 
-    // Function to update and draw the content of the canvas
+    // Generate a random position within the array
+    var position = getRandomInt(rows * cols); // Use rows * cols to get a valid index
+    const row = Math.floor(position / cols);
+    const col = position % cols;
+
+    screenArray[row][col] = 1;
+
+    // Function to draw the circles (apples)
+    function drawApples() {
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+                if (screenArray[row][col] === 1) {
+                    // Calculate the position for the circle
+                    const x = col * cellSize + cellSize / 2;
+                    const y = row * cellSize + cellSize / 2;
+
+                    // Draw the circle
+                    ctx.beginPath();
+                    ctx.arc(x, y, radius, 0, 2 * Math.PI);
+                    ctx.fillStyle = 'blue'; // Circle color
+                    ctx.fill();
+                    ctx.stroke(); // Optional: draw the border of the circle
+                }
+            }
+        }
+    }
+
     function update() {
         // Clear the canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Update the circle's coordinates (e.g., moving it in a circular path)
-        centerX += speedX;
-        centerY += speedY;
         
-        if (centerX + radius >= canvas.width){
-            centerX = canvas.width - radius;
-            speedX *= -coefficientOfRestitution;
-        }else if(centerX - radius <= 0){
-            centerX = radius;
-            speedX *= -coefficientOfRestitution;
-        }
-
-        if (centerY + radius >= canvas.height){
-            centerY = canvas.height - radius;
-            speedY *= -coefficientOfRestitution;
-        }else if(centerY - radius <= 0){
-            centerY = radius;
-            speedY *= -coefficientOfRestitution;
-        }
-        // Draw the circle
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = "purple";
-        ctx.fill();
-
+        // Draw the apple circles
+        drawApples();
 
         // Request the browser to call the update function on the next frame
-        requestAnimationFrame(update);
+        requestAnimationFrame(update); // Uncomment this line if you want continuous updates
     }
 
     // Start the animation
