@@ -9,16 +9,16 @@
 #define WINDOW_HEIGHT 600
 #define UWM_UPDATEPOSITIONS (WM_USER + 1)
 #define IDT_TIMER1 1
-#define RADIUS 10
+#define RADIUS 20
 
 
 
 LRESULT WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
         static int x = WINDOW_WIDTH/2 , y = WINDOW_HEIGHT/2;
-        static int speed_x = 1;
-        static int speed_y = 1;
-
+        static int speed_x = 3;
+        static int speed_y = 3;
+        static RECT rect;
 
         switch (uMsg) {
         case WM_TIMER:
@@ -29,24 +29,36 @@ LRESULT WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         }
         case UWM_UPDATEPOSITIONS:
         {
-            if (x + RADIUS >= WINDOW_WIDTH) {
+            /**
+            * Here we get the rect because the window's height and width are not equivalent to the visible portion of it.
+            * Rect contains information about the height, width and its margins.
+            */
+            GetClientRect(hwnd, &rect);
+            x += speed_x;
+            y += speed_y;
+            /**
+            * Important to not use the WINDOW_WIDTH macro instead of the rect.right as this will cause issues with the bottom and right margins.
+            */
+            if (x + RADIUS >= rect.right) {
                 speed_x *= -1;
-                x = WINDOW_WIDTH - RADIUS;
+                x = rect.right - RADIUS;
             }
             else if(x - RADIUS <= 0){
                 speed_x *= -1;
                 x = RADIUS;
             }
-            if (y + RADIUS >= WINDOW_HEIGHT) {
+            if (y + RADIUS >= rect.bottom) {
                 speed_y *= -1;
-                y = WINDOW_HEIGHT - RADIUS;
+                y = rect.bottom - RADIUS;
             }
             else if (y - RADIUS <= 0) {
                 speed_y *= -1;
                 y = RADIUS;
             }
-            x += speed_x;
-            y += speed_y;
+            /*
+            * With this method we force the OS to reload the page and, so, to re-paint the new items.
+            * To sum up, this forces a WM_PAINT message
+            */
             InvalidateRect(hwnd, NULL, TRUE);
         }
         case WM_CREATE:
@@ -62,10 +74,10 @@ LRESULT WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             FillRect(hdc, &ps.rcPaint, whiteBrush);
             DeleteObject(whiteBrush);
             // 3. Dibuixar el cercle
-            HBRUSH brush = CreateSolidBrush(RGB(rand(255), rand(255), rand(255))); // Color blau
+            HBRUSH brush = CreateSolidBrush(RGB(rand(255), rand(255), rand(255))); 
             SelectObject(hdc, brush);
 
-            Ellipse(hdc, x - RADIUS * 2, y - RADIUS * 2, x + RADIUS * 2, y + RADIUS * 2);
+            Ellipse(hdc, x - RADIUS, y - RADIUS, x + RADIUS, y + RADIUS);
 
             EndPaint(hwnd, &ps);
             DeleteObject(brush);
@@ -113,7 +125,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrev, PSTR lpCmdLine, int nCm
     };
 
     RegisterClassA(&class);
-    HWND windowHandle = CreateWindowA("FirstTest", "Hello World", WS_CAPTION | WS_POPUP | WS_SYSMENU, 50, 50, WINDOW_WIDTH, WINDOW_HEIGHT, NULL, NULL, hInstance, NULL);
+    HWND windowHandle = CreateWindowA("FirstTest", "Hello World", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT, NULL, NULL, hInstance, NULL);
     BOOL showWindowRet = ShowWindow(windowHandle, nCmdShow);
 
     MSG msg; /* MSG structure that receives message information from the thread's message queue */
